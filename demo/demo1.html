@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>操作层叠样式表</title>
+	<style>
+	#one{
+		width:200px;
+		height:200px;
+		background-color:red;
+		border:1px solid #ffffff;
+	}
+	#two{
+		color:blue;
+		height:300px;
+		width:300px;
+		border:2px solid #000000;
+	}
+	</style>
+	<script>
+		window.onload=function()
+		{
+			var oBtn=document.getElementById('btn1');
+			var oDiv=document.getElementById('one');
+			oBtn.onclick=function()
+			{
+				oDiv.id="two";
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id="one">
+		一切有为法，如梦幻泡影
+	</div>
+	<input type="button" id="btn1" value="点击修改样式"/>
+</body>
+</html>

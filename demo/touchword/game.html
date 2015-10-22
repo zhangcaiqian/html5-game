@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+	<meta charset="utf-8"/>
+	<head>
+		<script src="word.js"></script>
+	</head>
+	<body>
+		<canvas id="map" width="1300px" height="600px" style="background:#000;"></canvas>
+	</body>
+	<script>
+		//util function
+		function getCanvas(ID)
+		{
+			return document.getElementById(ID);
+		}
+
+		function getCanvasContext(ID)
+		{
+			return getCanvas(ID).getContext("2d");
+		}
+
+		function flushMap()
+		{
+			context.clearRect(0,0,canvas.width,canvas.height);
+			for(var i in arr)
+			{
+				arr[i].drawWord();
+				arr[i].checkBoundry();
+				if(arr[i].isAlive==false)
+				{
+					var b=new Bomb(arr[i].x,arr[i].y,400,100,arr[i].color);
+					b.creatBomb();
+					bomb.push(b);
+					arr.splice(i,1);
+				}
+			}
+			if(bomb.length!=0)
+			{
+				for(var j in bomb)
+				{
+					bomb[j].drawBomb();
+					if(bomb[j].isAlive==false)
+					{
+						bomb.splice(j,1);
+					}
+				}
+			}
+			//document.title=arr.length;
+		}
+
+		function keyEventListener(event)
+		{
+			var oEvent=event||ev;
+			var code=oEvent.keyCode-65;document.title=code;
+			for(var j in arr)
+			{
+				if(code==arr[j].index)
+				{
+					arr[j].isAlive=false;
+					break;
+				}
+			}
+		}
+
+		//global var
+		var context=getCanvasContext("map"),
+			canvas=getCanvas("map"),
+			speedY=2;
+		var keyword=new Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"),
+			arr=new Array(),
+			bomb=new Array();
+		var color=new Array("#f00","#0f0","#00f","#abcdef","yellow","#fff");
+		//var oword=new Word(100,200,1,"#0f0","asdasda");
+		//oword.drawWord();
+		var timer=setInterval(
+			function(){
+				var index=Math.floor(Math.random()*keyword.length);
+				var key=keyword[index];
+				var locationX=Math.random()*canvas.width;
+				if(locationX<100)
+				{
+					locationX=100;
+				}
+				if(locationX>900)
+				{
+					locationX=900;
+				}
+				arr.push(new Word(locationX,10,speedY,color[Math.floor (Math.random()*color.length)],key,index));
+			}
+			,1000);
+
+		window.onkeydown=keyEventListener;
+		(function drawFrame(){
+		window.requestAnimationFrame(drawFrame);
+		flushMap();//document.title=HeroBullet.length;
+	}());
+	</script>
+</html>

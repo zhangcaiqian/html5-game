@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+	<meta charset="utf-8"/>
+	<head>
+		<script src="js/Tank.js"></script>
+		<script src="js/util.js"></script>
+	</head>
+	<body>  <canvas id="tankMap" width="1100px" height="600" style="background-color:#000;"></canvas>
+	</body>
+	<script>
+		var Graphics=getCanvas("tankMap");
+		var canvas=getCanvasObject("tankMap");
+
+		//定义自己坦克的初始化变量：位置 速度 方向
+		var HeroX=canvas.width/2,
+			HeroY=canvas.height*0.9,
+			HeroSpeed=3;
+
+		//定义方向
+		var UP=0,RIGHT=1;DOWN=2;LEFT=3;
+
+		//定义颜色
+		var COLOR={red:"#ff0000",blue:"#0000ff",green:"#00ff0f",white:"#ffffff"};
+		var color=new Array("#f00","#0f0","#00f","#abcdef","yellow","#fff");
+
+		//敌人数量
+		var EnemyNumber=50;
+
+		//存放出现的爆炸对象
+		var aBomb=new Array();
+
+		//生成自己的坦克
+		var Hero=new HeroTank(HeroX,HeroY,HeroSpeed,UP,COLOR.green);
+
+		//存储英雄子弹的数组
+		var HeroBullet=new Array();
+
+		//存储敌人子弹的数组
+		var Enemy=new Array();
+
+		//随机生成敌方坦克的初始坐标与方向
+		var EnemyX,EnemyY,EnemyDirect;
+		for(var j=0;j<EnemyNumber;j++)
+		{
+			EnemyX=Math.random()*canvas.width;
+			EnemyY=Math.random()*(canvas.height/2);
+			EnemyDirect=Math.ceil(Math.random()*3);
+			//alert(EnemyDirect);
+			Enemy.push(new EnemyTank(EnemyX,EnemyY,0.5,EnemyDirect,color[Math.floor (Math.random()*color.length)]));
+		   }
+		flushMap(Hero,Graphics);
+
+		//键盘监听
+		window.onkeydown=keyBoardListener;
+
+		//键盘监听  重新绘制所有图像
+		function keyBoardListener(event)
+		{
+			var oEvent=event||ev;
+			var code=oEvent.keyCode;//W 87;S 83;A 65;D 68;空格 32
+			switch(code)
+			{
+				case 87:
+					HeroY-=Hero.speed;
+					Hero.y=HeroY;
+					Hero.moveUp();
+					break;
+				case 68:
+					HeroX+=Hero.speed;
+					Hero.x=HeroX;
+					Hero.moveRight();
+					break;
+				case 83:
+					HeroY+=Hero.speed;
+					Hero.y=HeroY;
+					Hero.moveDown();
+					break;
+				case 65:
+					HeroX-=Hero.speed;
+					Hero.x=HeroX;
+					Hero.moveLeft();
+					break;
+			}
+			if(code==32 && Hero.isAlive==true)
+			{
+				HeroBullet.push(Hero.shootEnemy());//将子弹对象压入数组
+			}
+			//flushMap(Hero,Enemy,Graphics);
+		}
+		//setInterval(function(){flushMap(Hero,Enemy,Graphics);document.title=HeroBullet.length;},30);
+
+		(function drawFrame(){
+			window.requestAnimationFrame(drawFrame);
+			flushMap(Hero,Graphics);//document.title=HeroBullet.length;
+	}());
+	</script>
+</html>

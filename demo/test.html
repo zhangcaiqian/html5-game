@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>demo1</title>
+</head>
+<body>
+	<canvas id="can1" width="500px" height="500px"></canvas>
+	<input type="text" x-webkit-speech x-webkit-grammar="builtin:translate" />
+</body>
+<script>
+	var oCanvas=document.getElementById("can1");
+	var con=oCanvas.getContext('2d');
+	function moveLine(s)
+	{
+		con.clearRect(0,0,500,500);
+		if(s=='')
+		{
+			speed=0;
+		}
+		else
+		{
+			speed=s;
+		}
+		con.moveTo(20+speed,20+speed);
+		con.lineTo(100+speed,100+speed);
+		con.stroke();
+
+		con.beginPath();
+		con.fillRect(100+speed,100+speed,20,20);
+		con.closePath();
+	}
+	moveLine(0);
+	var SPEED=0;
+	var A=0;
+	setInterval(function(){
+		moveLine(SPEED);
+		SPEED+=A;
+		A+=0.1;
+	},30);
+</script>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+	<meta charset="utf-8"/>
+	<head></head>
+	<body>
+		<canvas id="map" width="900px" height="500px" style="background-color:#000000;"></canvas>
+		<script>
+			var canvas=document.getElementById("map");
+			var context=canvas.getContext("2d");
+			var ball=new Array();
+			var BallX=canvas.width/2,
+				BallY=canvas.height/2,
+				BallVx,
+				BallVy,
+				BallRotation,
+				BallR,
+				//BallColor="#fff";
+			    COLOR=new Array("#f00","#0f0","#00f","#abcdef","yellow","#fff");
+			    aDirection=new Array("-1","1");//速度方向
+			function Ball(x,y,av,vx,vy,rotation,radius,color)
+			{
+				this.x=x;
+				this.y=y;
+				this.av=av;//加速度
+				this.vx=vx;//x轴速度
+				this.vy=vy;//y轴速度
+				this.rotation=rotation;//画布旋转角度
+				this.radius=radius;//球体半径
+				this.color=color;//球体颜色
+				this.isAlive=true;
+				this.drawBall=function()
+				{
+					context.save();
+					//context.translate(this.x,this.y);
+					//context.rotate(this.rotation);
+					//context.scale(this.scaleX,this.scaleY);
+					context.lineWidth=1;
+					context.fillStyle=this.color;
+					context.beginPath();
+					context.arc(this.x,this.y,this.radius,0,(Math.PI*2),true);
+					context.closePath();
+					context.fill();
+					if(this.lineWidth>0)
+					{
+						context.stroke();
+					}
+					context.restore();
+				}
+
+				this.checkBoundary=function(BombX,BombY,radius)
+				{
+					if(Math.sqrt((this.x-BombX)*(this.x-BombX)+(this.y-BombY)*(this.y-BombY))>=radius)
+					{
+						this.isAlive=false;
+					}
+				}
+			}
+
+			/*function getDirection()
+			{
+				return aDirection[Math.floor(Math.random()*aDirection.length)];
+			}
+
+			for(var i=0;i<50;i++)
+			{//alert(getDirection());
+				BallVx=Math.ceil(Math.random()*10*getDirection());
+				BallVy=Math.ceil(Math.random()*10*getDirection());
+				BallRotation=Math.random()*360*Math.PI/180;//document.title=Math.random()*360;alert(12);
+				BallR=Math.ceil(Math.random()*4);
+				BallColor=COLOR[Math.floor(Math.random()*(COLOR.length))];
+				ball.push(new Ball(BallX,BallY,-0.01,BallVx,BallVy,BallRotation,BallR,BallColor));
+			}*/
+
+			function Bomb(x,y,radius,density,color)//绘制炸弹
+			{
+				this.x=x;//位置
+				this.y=y;
+				this.radius=radius;//爆炸半径
+				this.density=density;//碎片密度
+				this.color=color;//碎片颜色
+				this.aDirection=new Array("-1","1");//速度方向
+				this.ball=new Array();//存储球体
+
+				this.getDirection=function()//产生碎片速度的随机正负值
+				{
+					return this.aDirection[Math.floor(Math.random()*this.aDirection.length)];		
+				}
+				
+				this.creatBomb=function()
+				{
+					for(var i=0;i<this.density;i++)
+					{
+						//BallVx=Math.ceil(Math.random()*20*this.getDirection());
+						//BallVy=Math.ceil(Math.random()*4*this.getDirection());
+						//BallRotation=Math.random()*360*Math.PI/180;
+						//BallR=Math.ceil(Math.random()*2);
+						this.ball.push(new Ball(this.x,
+												this.y,
+												-0.01,
+												Math.ceil(Math.random()*20*this.getDirection()),
+												Math.ceil(Math.random()*4*this.getDirection()),
+												Math.random()*360*Math.PI/180,
+												Math.ceil(Math.random()*2),
+												this.color));
+					}
+				}
+
+				this.drawBomb=function()
+				{
+					for(var i in this.ball)
+					{
+						this.ball[i].checkBoundary(this.x,this.y,this.radius);
+						if(this.ball[i].isAlive==true)
+						{
+							this.ball[i].vx+=this.ball[i].av;
+							this.ball[i].vy+=this.ball[i].av;
+							this.ball[i].x+=this.ball[i].vx;
+							this.ball[i].y+=this.ball[i].vy;
+							this.ball[i].drawBall();
+						}
+						else if(this.ball[i].isAlive==false)
+						{
+							this.ball.splice(i,1);
+						}
+					}
+				}
+			}
+
+			var arrBomb=new Array();
+			for(var i=0;i<10;i++)
+			{
+				arrBomb.push(new Bomb(Math.random()*canvas.width,Math.random()*canvas.height,50,100,"#fff"));
+			}
+
+			for(var i in arrBomb)
+				{//alert(typeof arrBomb[i]);
+					arrBomb[i].creatBomb();
+				}
+
+			//var bomb=new Bomb(100,250,50,100,"#fff");
+			//	bomb.creatBomb();
+			function flush()
+			{
+				/*context.clearRect(0,0,canvas.width,canvas.height);
+				for(var i in ball)
+				{
+					ball[i].vx+=ball[i].av;
+					ball[i].vy+=ball[i].av;
+					ball[i].x+=ball[i].vx;
+					ball[i].y+=ball[i].vy;
+					ball[i].drawBall();
+				}*/
+				context.clearRect(0,0,canvas.width,canvas.height);
+				//bomb.drawBomb();
+				for(var i in arrBomb)
+				{//alert(typeof arrBomb[i]);
+					arrBomb[i].drawBomb();
+				}
+			}
+
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame);
+				flush();
+			}());
+		</script>
+	</body>
+</html>

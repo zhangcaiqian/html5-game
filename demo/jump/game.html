@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+	<meta charset="utf-8"/>
+	<head>
+		<script src="class.js"></script>
+	</head>
+	<body>
+		<canvas id="map" width="1300px" height="600px" style="background:#000;"></canvas>
+	</body>
+	<script>
+		//util function
+		function getCanvas(ID)
+		{
+			return document.getElementById(ID);
+		}
+
+		function getCanvasContext(ID)
+		{
+			return getCanvas(ID).getContext("2d");
+		}
+
+		function flushMap()
+		{
+			context.clearRect(0,0,canvas.width,canvas.height);
+			Hero.changeY();document.title=Hero.x;
+			Hero.checkBoundary();
+			Hero.drawBall(context);
+		}
+
+		function keyEventListener(event)
+		{
+			var oEvent=event||ev;
+			switch(oEvent.keyCode)
+			{
+				case 39:
+					Hero.moveRight();
+					break;
+				case 37:
+					Hero.moveLeft();
+					break;
+			}					//alert(oEvent.keyCode);->39  <-37
+		}
+
+		var canvas=getCanvas("map"),
+			context=getCanvasContext("map");
+		var Hero=new Ball(canvas.width/2,canvas.height/2,0.06,0,-6,0,30,"red");//alert(Hero);
+			Hero.drawBall(context);
+
+		window.onkeydown=keyEventListener;
+		(function drawFrame(){
+		window.requestAnimationFrame(drawFrame);
+		flushMap();//document.title=HeroBullet.length;
+	}());
+	</script>
+
+</html>
